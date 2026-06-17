@@ -24,7 +24,7 @@ nav li a {
   display: inline-block;
   padding: 10px 0;
   background: transparent; 
-  color: #eaa; /* Merah pudar untuk menu yang belum dipilih */
+  color: #bf9090; /* Merah pudar untuk menu yang belum dipilih */
   text-decoration: none;
   font-weight: bold;
 }
