@@ -697,11 +697,12 @@ let articleHtml;
     articleHtml = '<div class="article main-text loading"><div class="loader"></div></div>';
   } else {
     let namaAmanURL = encodeURIComponent(record.title);
-    let gFormUrl = `https://docs.google.com/forms/d/e/1FAIpQLSeHMSn6cwcgbZ0xx1CJ5tGXDQacYgzRZUG51STByKUROWXgmg/viewform?usp=pp_url&entry.2138396049=${namaAmanURL}`;
-    articleHtml = `<div class="article main-text nodata"><p>Masjid ini belum memiliki artikel. <a href="javascript:void(0)" data-gform-url="${gFormUrl}" class="sunting-linktambah buka-form-embed">Tambahkan!</a></p></div>`;
+    let gFormUrl = `https://docs.google.com/forms/d/e/1FAIpQLSfZWeSxNIBdD2Zw8aWW2PIPtuN-9nPWRtiCdhNXpkFRPwfz3A/viewform?usp=pp_url&entry.2092238618=${namaAmanURL}`;
+    
+    // Pastikan href langsung mengarah ke ${gFormUrl} dan ada target="_blank"
+    articleHtml = `<div class="article main-text nodata"><p>Masjid ini belum memiliki artikel. <a href="${gFormUrl}" target="_blank" rel="noopener noreferrer" class="sunting-linktambah">Tambahkan!</a></p></div>`;
   }
-  // ---------------------------------
-
+  
   // --- BARU MASUK KE KODE RINGKASAN YANG BARU ---
 let wikiUrlUtama = `https://www.wikidata.org/wiki/${qid}`;
   let tautanSuntingRingkasan = `<a href="${wikiUrlUtama}" target="_blank" class="sunting-link" title="Sunting data di Wikidata" aria-label="Sunting data di Wikidata"></a>`;
@@ -981,41 +982,6 @@ if (scrollContainer) {
     }
   });
 }
-
-// ============================================================
-// MESIN PENGGERAK GOOGLE FORM DINAMIS (IFRAME)
-// ============================================================
-document.addEventListener('click', function(e) {
-  
-  // 1. Jika yang diklik adalah tombol "Tambahkan!" (buka-form-embed)
-  if (e.target && e.target.classList.contains('buka-form-embed')) {
-    e.preventDefault(); // Mencegah layar melompat ke atas
-    
-    // Ambil URL form dari tombol yang diklik
-    let urlRahasia = e.target.getAttribute('data-gform-url');
-    
-    // Panggil wadah HTML kita
-    let formSection = document.getElementById('form-embed-section');
-    let iframe = document.getElementById('dynamic-gform-frame');
-    
-    // Suntikkan URL ke dalam Iframe dan munculkan wadahnya
-    iframe.src = urlRahasia;
-    formSection.style.display = 'block'; 
-    
-    // Gulir layar secara halus ke arah form tersebut
-    formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // 2. Jika yang diklik adalah tombol "Tutup Form"
-  if (e.target && e.target.id === 'tutup-form-btn') {
-    let formSection = document.getElementById('form-embed-section');
-    let iframe = document.getElementById('dynamic-gform-frame');
-    
-    // Sembunyikan kembali wadahnya dan kosongkan link iframe agar tidak berat
-    formSection.style.display = 'none';
-    iframe.src = ''; 
-  }
-});
 
 function queryOsm(qid) {
   let xhr = new XMLHttpRequest();
