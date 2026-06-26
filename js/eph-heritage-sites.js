@@ -152,7 +152,7 @@ console.log("Kueri yang dikirim ke Wikidata:", dynamicQuery); // Lihat hasilnya 
       record.title = ('siteLabel' in result && result.siteLabel.value) ? result.siteLabel.value : '[ERROR: No title]';
 
       let provQid = result.provinsiQid ? result.provinsiQid.value : 'Q_UNKNOWN';
-      let provLabel = result.provinsiLabel ? result.provinsiLabel.value : 'Wilayah Tidak Tercatat';
+let provLabel = result.provinsiLabel ? result.provinsiLabel.value : 'Tidak dalam Provinsi';
 
       if (!(provQid in ProvinceIndex)) {
         ProvinceIndex[provQid] = new ProvinceIndexEntry();
@@ -475,10 +475,15 @@ if (currentKategoriUtama === 'alam') {
 
   selectRegion.innerHTML = `<option value="all">Semua Wilayah – ${ProvinceIndex['all'].total}</option>`;
   
-  Object.keys(ProvinceIndex)
+Object.keys(ProvinceIndex)
     .filter(qid => qid !== 'all')
     .map(qid => { return { qid: qid, name: ProvinceIndex[qid].name, total: ProvinceIndex[qid].total }; })
-    .sort((a, b) => a.name.localeCompare(b.name))
+.sort((a, b) => {
+      // Bersih dan langsung fokus ke teks yang baru
+      if (a.name === 'Tidak dalam Provinsi') return 1;
+      if (b.name === 'Tidak dalam Provinsi') return -1;
+      return a.name.localeCompare(b.name);
+    })
     .forEach(prov => {
       let option = document.createElement('option');
       option.value = prov.qid;
@@ -741,12 +746,22 @@ function generateRecordDetails(qid) {
 
   // 1. Gabungkan semua provinsi menjadi satu teks (misal: "Jawa Tengah, Jawa Timur")
   // Berlaku untuk alam dan general
-  let arrayProvinsi = Object.values(record.designations);
+let arrayProvinsi = Object.values(record.designations).filter(p => p !== 'Tidak dalam Provinsi');
+  
+  // Jika setelah disaring ternyata kosong, kembalikan teksnya agar tidak blank
+  if (arrayProvinsi.length === 0) {
+    arrayProvinsi.push('Tanpa Lokasi Spesifik');
+  }
+  
   let teksDaftarProvinsi = arrayProvinsi.join(', '); 
 
   // 2. Siapkan Info Lokasi
-  let spesifik = record.lokasiSpesifik; 
-  let namaLokasi = teksDaftarProvinsi; 
+let spesifik = record.lokasiSpesifik; 
+  if (spesifik === 'Tanpa Lokasi Spesifik') {
+    spesifik = null;
+  }
+
+  let namaLokasi = teksDaftarProvinsi;
 
   // Hindari duplikasi kata jika lokasi spesifiknya sama dengan nama provinsi
   if (spesifik && !arrayProvinsi.map(p => p.toLowerCase()).includes(spesifik.toLowerCase())) {
