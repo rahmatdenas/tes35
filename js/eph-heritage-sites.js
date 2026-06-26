@@ -877,7 +877,7 @@ function renderHistoricalImagesInPanel(qid) {
   
   // 1. Tambahkan parameter 'teksPengganti' di sini
   function buildImageBlock(imgObj, teksPengganti) {
-    let block = '<div class="arsip-block" style="overflow: hidden; margin-bottom: 10px;">';
+    let block = '<div class="arsip-block" style="overflow: hidden;">';
     block += generateFigure(imgObj.file);
     if (imgObj.caption && imgObj.caption.trim() !== '') {
       block += `<div class="article main-text"><p>${imgObj.caption}</p></div>`;
